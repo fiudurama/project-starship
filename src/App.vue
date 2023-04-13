@@ -1,48 +1,16 @@
 <template>
 	<div id="app">
 		<section class="content">
-			<main class="content-controls content__controls">
-				<div class="content-controls__item">
-					<input
-					ref="countControl"
-					@keyup.enter="countHandler($event.target.value)"
-					placeholder="Количество блоков"
-					type="text"
-				>
-					<ul
-						v-if="blocks.length"
-						class="count-controls"
-					>
-						<li
-							v-for="block in blocks"
-							:key="`input${block.id}`"
-							class="count-controls__item"
-						>
-							<ShiftControlsInput
-								:block="block"
-							/>
-						</li>
-					</ul>
-				</div>
-				<div class="content-controls__item">
-					<input
-						@keyup.enter="shiftHandler($event.target.value)"
-						@blur="shiftHandler($event.target.value)"
-						:value="maxShift"
-						placeholder="Максимальное смещение"
-						type="text"
-					>
-				</div>
-				<div class="content-controls__item">
-					<input
-						@keyup.enter="setLeadBlock($event.target.value)"
-						@blur="setLeadBlock($event.target.value)"
-						:value="leadId"
-						placeholder="Лидирующий блок"
-						type="text">
-				</div>
-			</main>
-			<aside class="content__info"></aside>
+			<ControlsBlock />
+			<aside class="content-info content__info">
+				<button
+					@click="toggleInfoBlockVisibility"
+					class="content-info__btn"
+				>Показать информацию</button>
+				<keep-alive>
+					<InfoBlock v-show="isInfoBlockVisible"/>
+				</keep-alive>
+			</aside>
 		</section>
 		<footer class="footer">
 			<ul
@@ -67,40 +35,29 @@
 </template>
 
 <script>
-	import ShiftControlsInput from '@/components/ShiftControlsInput';
 	import {mapGetters} from 'vuex';
-	import { GAP, BLOCK_WIDTH } from '@/constants';
+	import ControlsBlock from '@/components/ControlsBlock.vue';
+
+	const InfoBlock = () => import(/* webpackChunkName: "info-block" */ './components/InfoBlock.vue');
 
 	export default {
 		name: 'App',
-		components: {ShiftControlsInput},
+		components: {ControlsBlock, InfoBlock},
+		data() {
+			return {
+				isInfoBlockVisible: false,
+			}
+		},
 		computed: {
 			...mapGetters({
 				blocks: 'getBlocks',
 				maxShift: 'getMaxShift',
-				windowWidth: 'getWindowWidth',
-				leadId: 'getLeadId',
 			}),
 		},
-		created() {
-			this.$store.commit('setWindowWidth', window.innerWidth);
-		},
 		methods: {
-			countHandler(n) {
-				if (n * BLOCK_WIDTH + (n - 1) * GAP < this.windowWidth) {
-					const blocks = Array.from({length: n}, (_, i) => ({id: i + 1, title: i + 1, shift: 0}));
-					this.$store.commit('updateBlocks', blocks)
-					this.$refs.countControl.value = '';
-				}
+			toggleInfoBlockVisibility() {
+				this.isInfoBlockVisible = !this.isInfoBlockVisible;
 			},
-			shiftHandler(shift) {
-				if (shift >= 0) {
-					this.$store.commit('updateMaxShift', shift)
-				}
-			},
-			setLeadBlock(id) {
-				this.$store.commit('updateLeadBlock', Number(id))
-			}
 		},
 	}
 </script>
@@ -113,6 +70,11 @@
 	body {
 		margin: 0;
 		padding: 10px;
+	}
+
+	.content {
+		display: flex;
+		justify-content: space-between;
 	}
 
 	.count-controls {
