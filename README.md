@@ -1,4 +1,4 @@
-# shop-task
+# Starship project
 
 ## Project setup
 ```
