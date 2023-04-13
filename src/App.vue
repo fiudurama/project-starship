@@ -28,7 +28,7 @@
 			</ul>
 		</footer>
 		<div
-			:style="{'bottom': `${maxShift}px`}"
+			:style="{'bottom': `${maxShiftModel}px`}"
 			class="shift-boundaries"
 		></div>
 	</div>
@@ -37,6 +37,7 @@
 <script>
 	import {mapGetters} from 'vuex';
 	import ControlsBlock from '@/components/ControlsBlock.vue';
+	import {BLOCK_HEIGHT, GAP} from "@/constants";
 
 	const InfoBlock = () => import(/* webpackChunkName: "info-block" */ './components/InfoBlock.vue');
 
@@ -53,6 +54,9 @@
 				blocks: 'getBlocks',
 				maxShift: 'getMaxShift',
 			}),
+			maxShiftModel() {
+				return this.maxShift <= BLOCK_HEIGHT + GAP ? BLOCK_HEIGHT + GAP : this.maxShift;
+			},
 		},
 		methods: {
 			toggleInfoBlockVisibility() {
