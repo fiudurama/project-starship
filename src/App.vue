@@ -3,10 +3,16 @@
 		<section class="content">
 			<ControlsBlock />
 			<aside class="content-info content__info">
-				<button
-					@click="toggleInfoBlockVisibility"
-					class="content-info__btn"
-				>Показать информацию</button>
+				<div class="content-info__controls">
+					<button
+						@click="toggleInfoBlockVisibility"
+						class="content-info__btn"
+					>Показать информацию</button>
+					<button
+						@click="resetToDefault()"
+						class="content-info__btn"
+					>Очистить</button>
+				</div>
 				<keep-alive>
 					<InfoBlock v-show="isInfoBlockVisible"/>
 				</keep-alive>
@@ -62,6 +68,9 @@
 			toggleInfoBlockVisibility() {
 				this.isInfoBlockVisible = !this.isInfoBlockVisible;
 			},
+			resetToDefault() {
+				this.$store.commit('resetToDefault');
+			}
 		},
 	}
 </script>
@@ -124,5 +133,9 @@
 		right: 10px;
 		height: 1px;
 		background-color: #000000;
+	}
+
+	.content-info__btn + .content-info__btn {
+		margin-left: 10px;
 	}
 </style>

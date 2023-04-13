@@ -72,11 +72,11 @@ export default new Vuex.Store({
 				if (leadBlockShift > BLOCK_HEIGHT / 2) {
 					state.blocks.forEach(block => {
 						if (+block.shift > leadBlockShift) {
-							block.shift = leadBlockShift - BLOCK_HEIGHT / 2;
+							Vue.set(block, 'shift', leadBlockShift - BLOCK_HEIGHT / 2)
 						}
 					})
 				} else {
-					state.blocks.filter(block => block.id !== id).forEach(block => block.shift = 0);
+					state.blocks.filter(block => block.id !== id).forEach(block => Vue.set(block, 'shift', 0));
 				}
 
 				Vue.set(state, 'leadBlock', block.id);
@@ -90,6 +90,15 @@ export default new Vuex.Store({
 		},
 		setErrorMessage(state, payload) {
 			Vue.set(state, 'errorMessage', payload);
+		},
+		resetToDefault(state) {
+			console.log(state.blocks.length, state.oldBlocks.length)
+			state.blocks.splice(0, state.blocks.length);
+			state.oldBlocks.splice(0, state.oldBlocks.length);
+			Vue.set(state, 'maxShift', 0);
+			Vue.set(state, 'leadBlock', '');
+			Vue.set(state, 'availableHeight', 0);
+			Vue.set(state, 'errorMessage', '');
 		}
 	}
 });
