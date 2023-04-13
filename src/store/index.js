@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { BLOCK_HEIGHT } from '@/constants';
+import {BLOCK_HEIGHT, GAP} from '@/constants';
 
 Vue.use(Vuex);
 
@@ -51,6 +51,14 @@ export default new Vuex.Store({
 		},
 		updateMaxShift(state, payload) {
 			Vue.set(state, 'maxShift', payload);
+
+			state.blocks.forEach(block => {
+				if (state.maxShift <= 110 && block.shift + BLOCK_HEIGHT > state.maxShift) {
+					Vue.set(block, 'shift', 0);
+				} else if (state.maxShift < block.shift + BLOCK_HEIGHT) {
+					Vue.set(block, 'shift', state.maxShift - (BLOCK_HEIGHT + GAP))
+				}
+			})
 		},
 		updateLeadBlock(state, id) {
 			const block = state.blocks.find(block => block.id === id);
